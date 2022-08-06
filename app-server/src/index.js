@@ -5,7 +5,7 @@ const express = require('express');
 const axios = require("axios");
 const app = express();
 console.log(require('dotenv').config());
-const {CLIENT_ID, CLIENT_SECRET, REDIRECT_URI} = process.env;
+const {BASE_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI} = process.env;
 const authorizeUrl = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=playlist-modify-public playlist-modify-private`;
 let authorizationCode;
 let refreshToken;
@@ -106,7 +106,7 @@ const addSongToPlaylist = async (message) => {
         const {body} = message;
 	console.log(`msg: ${JSON.stringify(message)}`);
         const prefix = "https://open.spotify.com/track/";
-        const result = body.trim().split(/\s+/); 
+        const result = body.trim().split(/\s+/);
 	console.log(result);
 	for (const link of result) {
             if (link?.startsWith(prefix)) {
@@ -136,7 +136,8 @@ async function initWhatsapp () {
 
 const updateToken = async () => {
     if (!authorizationCode) {
-        console.log("Please login!");
+        console.log("Please login at");
+        console.log(`${BASE_URL}login`)
         return;
     }
     if (accessToken) {
