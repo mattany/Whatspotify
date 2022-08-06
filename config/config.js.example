@@ -1,0 +1,9 @@
+const config = {
+    chatNameToPlayListUrl: {
+        "Group1": "https://api.spotify.com/v1/playlists/40p1Us7xfnoXTOXbaEojsX/tracks",
+        "Group2":  "https://api.spotify.com/v1/playlists/7y6HEv5AfdS1B9r7OlIJbz/tracks"
+    }
+
+}
+
+module.exports = config;

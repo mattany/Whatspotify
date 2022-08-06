@@ -3,3 +3,4 @@ app-server/.env
 /app-server/.wwebjs_auth/
 chats.json
 app-client
+config/config.js

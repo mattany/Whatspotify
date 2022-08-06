@@ -58,29 +58,29 @@ const constructHeaders = (accessToken) => {return {
     }
 }};
 
-const postPlaylistParams = (trackId) => {
+const postPlaylistParams = (trackId, playlistUrl) => {
     return {
         method: 'post',
-        url: config.playlistUrl,
+        url: playlistUrl,
         params: {
             uris: `spotify:track:${trackId}`
         }
     }
 }
 
-const getPlaylistParams = {
-    method: 'get',
-    url: config.playlistUrl
-};
 
-
-const addTrackToPlaylist = async (link, prefix) => {
+const addTrackToPlaylist = async (link, playlistUrl) => {
+    const prefix = "https://open.spotify.com/track/";
     await updateToken();
     const { headers } = constructHeaders(accessToken);
     const trackId = link.slice(prefix.length, prefix.length + 22);
     let playlist = null;
     try {
-        const res = await axios({...getPlaylistParams, headers});
+        const res = await axios({...{
+                method: 'get',
+                url: playlistUrl
+            },
+            headers});
         playlist = res.data;
         console.log("playlist:", playlist)
     } catch (e) {
@@ -90,7 +90,7 @@ const addTrackToPlaylist = async (link, prefix) => {
     const existingTrackIds = existingTracks.map(item => item.track?.href.slice(item.track.href.length - 22));
     if (!existingTrackIds.includes(trackId)) {
         try {
-            await axios({...postPlaylistParams(trackId), headers});
+            await axios({...postPlaylistParams(trackId, playlistUrl), headers});
         } catch (e) {
             console.error(`Error posting playlist: ${e}`);
         }
@@ -99,12 +99,13 @@ const addTrackToPlaylist = async (link, prefix) => {
 
 const addSongToPlaylist = async (message) => {
     const {name: chatName} = await message.getChat();
-    if (chatName === "Me") {
+    let playlistUrl = config.chatNameToPlayListUrl[chatName];
+    if (playlistUrl) {
         const {links} = message;
         const prefix = "https://open.spotify.com/track/";
         for (const { link } of links) {
             if (link?.startsWith(prefix)) {
-                await addTrackToPlaylist(link, prefix);
+                await addTrackToPlaylist(link, playlistUrl);
             }
         }
     }
