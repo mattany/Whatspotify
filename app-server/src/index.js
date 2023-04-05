@@ -70,6 +70,7 @@ const postPlaylistParams = (trackId, playlistUrl) => {
 
 
 const addTrackToPlaylist = async (link, playlistUrl) => {
+    console.log(`adding ${link} to ${playlistUrl}`);
     const prefix = "https://open.spotify.com/track/";
     await updateToken();
     const { headers } = constructHeaders(accessToken);
@@ -100,10 +101,14 @@ const addTrackToPlaylist = async (link, playlistUrl) => {
 const addSongToPlaylist = async (message) => {
     const {name: chatName} = await message.getChat();
     let playlistUrl = config.chatNameToPlayListUrl[chatName];
+    console.log(`playlist url: ${playlistUrl}`);
     if (playlistUrl) {
-        const {links} = message;
+        const {body} = message;
+	console.log(`msg: ${JSON.stringify(message)}`);
         const prefix = "https://open.spotify.com/track/";
-        for (const { link } of links) {
+        const result = body.trim().split(/\s+/); 
+	console.log(result);
+	for (const link of result) {
             if (link?.startsWith(prefix)) {
                 await addTrackToPlaylist(link, playlistUrl);
             }
